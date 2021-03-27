@@ -11,6 +11,7 @@ public class Board extends JPanel {
     private int[][] boardValues;
     private JButton[][] boardButtons;
     private boolean firstClick = true;
+    private boolean gameover = false;
 
     public Board() {
         initializeBoard();
@@ -34,7 +35,8 @@ public class Board extends JPanel {
             }
         }
 
-        // Fills the rest of the boards with numbers (0-8, based on how many neighbouring mines)
+        // Fills the rest of the boards with numbers (0-8, based on how many
+        // neighbouring mines)
         for (int i = 0; i < BOARD_LENGTH; i++) {
             for (int j = 0; j < BOARD_LENGTH; j++) {
                 if (boardValues[i][j] != -1)
@@ -115,6 +117,7 @@ public class Board extends JPanel {
         if (initialClick) {
             if (boardValues[y][x] == -1) {
                 boardButtons[y][x].setBackground(Color.RED);
+                triggerGameOver();
                 // System.out.println("BOOM");
                 return;
             }
@@ -139,5 +142,22 @@ public class Board extends JPanel {
         reveal(x - 1, y + 1, false);
         reveal(x, y + 1, false);
         reveal(x + 1, y + 1, false);
+    }
+
+    public void triggerGameOver() {
+        gameover = true;
+        for (int i = 0; i < BOARD_LENGTH; i++) {
+            for (int j = 0; j < BOARD_LENGTH; j++) {
+                boardButtons[i][j].setText(Integer.toString(boardValues[i][j]));
+                boardButtons[i][j].setEnabled(false);
+                if (boardValues[i][j] == -1) {
+                    boardButtons[i][j].setBackground(Color.RED);
+                }
+            }
+        }
+        int choice = JOptionPane.showOptionDialog(null, "You clicked on a mine! Retry?", "Game Over",
+                JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, null, 1);
+        // 1 is don't retry, 0 is retry
+        System.out.println(choice);
     }
 }
